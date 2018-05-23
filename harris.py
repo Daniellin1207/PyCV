@@ -17,7 +17,8 @@ def compute_harris_response(im, sigma=3):
 
     Wdet = Wxx * Wyy - Wxy ** 2
     Wtr = Wxx + Wyy
-
+    imshow(Wdet)
+    show()
     return Wdet / Wtr
 
 
@@ -25,11 +26,11 @@ def get_harris_points(harrisim, min_dist=10, threshold=0.2):
     corner_threshold = harrisim.max() * threshold
     harrisim_t = (harrisim > corner_threshold) * 1
 
-    coords = array(harrisim_t.nonzero()).T
+    coords = array(harrisim_t.nonzero()).T  #输出harrism_t矩阵中非零元素的下标
 
-    candidate_values = [harrisim[c[0], c[1]] for c in coords]
+    candidate_values = [harrisim[c[0], c[1]] for c in coords]#取出所有非零元素，即角点值
 
-    index = argsort(candidate_values)
+    index = argsort(candidate_values)#将角点值排序小到大，返回index
 
     allowed_locations = zeros(harrisim.shape)
     allowed_locations[min_dist:-min_dist, min_dist:-min_dist] = 1
@@ -108,29 +109,29 @@ def plot_matches(im1, im2, locs1, locs2, matchscores, show_below=True):
     cols1 = im1.shape[1]
     for i, m in enumerate(matchscores):
         if m > 0:
-            plot([locs1[i][1], locs2[m][1], +cols1], [locs1[i][0], locs2[m][0]], 'c')
+            plot([locs1[i][1], locs2[m][1], +cols1], [locs1[i][0], locs2[m][0]])
     axis('off')
 
 
 im1 = array(Image.open('Material\\lena.jpg').convert('L'))
-im2 = array(Image.open('Material\\lena.jpg').convert('L'))
+im2 = array(Image.open('Material\\lena1.jpg').convert('L'))
 
 wid = 5
 
 harrisim = compute_harris_response(im1, 5)
 filtered_coords1 = get_harris_points(harrisim, wid + 1)
-d1 = get_descriptors(im1, filtered_coords1, wid)
-
-harrisim = compute_harris_response(im2, 5)
-filtered_coords2 = get_harris_points(harrisim, wid + 1)
-d2 = get_descriptors(im2, filtered_coords2, wid)
-
-print('starting matching')
-matches = match_twosided(d1, d2)
-
-figure()
-gray()
-plot_matches(im1, im2, filtered_coords1, filtered_coords2, matches)
+# d1 = get_descriptors(im1, filtered_coords1, wid)
+#
+# harrisim = compute_harris_response(im2, 5)
+# filtered_coords2 = get_harris_points(harrisim, wid + 1)
+# d2 = get_descriptors(im2, filtered_coords2, wid)
+#
+# print('starting matching')
+# matches = match_twosided(d1, d2)
+#
+# figure()
+# gray()
+# plot_matches(im1, im2, filtered_coords1, filtered_coords2, matches[:100])
 show()
 
 #
