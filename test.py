@@ -5,8 +5,70 @@
 """
 
 from PIL import Image
-from pylab import array,imshow,ginput,show,figure,gray
+from pylab import *
 pil_im_path = "Material/timg.jpg"
+
+a=np.array([[[1,1],[1,1]],[[1,2],[1,2]]])
+b=np.array([[1,0],[1,0]])
+print(np.multiply(a,b))
+
+
+
+def hist():
+    im=array(Image.open(pil_im_path).convert('L'))
+    figure(1)
+    imshow(Image.fromarray(im))
+    print(im.shape)
+    dic={i:0 for i in range(256)}
+    for i in im.flatten():
+        if i in dic.keys():
+            dic[i]+=1
+        else:
+            dic[i]=1
+    for k in dic.keys():
+        dic[k]=dic[k]/len(im.flatten())
+    sorted(dic.items(),key=lambda x:x[0])
+    figure(2)
+    plot(dic.keys(),dic.values())
+    # show()
+    return dic
+# hist()
+def cdf():
+    dic=hist()
+    y=[]
+    sum=0
+    for k in dic.keys():
+        sum+=dic[k]
+        y.append(sum)
+    return dic,y
+    # plot([i for i in range(256)],y)
+    # show()
+# cdf()
+def hist_ave():
+    im=array(Image.open(pil_im_path).convert('L'))
+    dic,y=cdf()
+    for i in range(1200):
+        for j in range(1920):
+            im[i,j]=im[i,j]*y[im[i,j]]
+
+    figure(3)
+    dic = {i: 0 for i in range(256)}
+    for i in im.flatten():
+        if i in dic.keys():
+            dic[i] += 1
+        else:
+            dic[i] = 1
+    for k in dic.keys():
+        dic[k] = dic[k] / len(im.flatten())
+    sorted(dic.items(), key=lambda x: x[0])
+    plot(dic.keys(), dic.values())
+
+    figure(4)
+    imshow(Image.fromarray(im))
+    show()
+
+# hist_ave()
+
 
 # def test5():
 #     im=array(Image.open(pil_im_path).convert('L'))
